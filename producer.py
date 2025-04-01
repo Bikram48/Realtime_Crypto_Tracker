@@ -20,18 +20,14 @@ def delivery_report(err, msg):
     else:
         print(f"Message delivered to {msg.topic()} [{msg.partition()}]")
 
+load_dotenv()
 
-# Specify the correct path to the ChromeDriver binary
 chrome_driver_path = "/Users/bikram/Downloads/chromedriver-mac-arm64-1/chromedriver"
-
-# Initialize the Service
 cService = Service(executable_path=chrome_driver_path)
 
-# Start Chrome WebDriver
 driver = webdriver.Chrome(service=cService)
 
 url = os.getenv("WEB_URL")
-# Open a website (e.g., Google)
 driver.get(url)
 tbody = driver.find_element(By.CSS_SELECTOR, "tbody.tw-divide-y")
 rows = tbody.find_elements(By.XPATH, ".//tr")
@@ -58,18 +54,4 @@ for row in rows:
     producer.produce(TOPIC_NAME, key=coin_name, value=json.dumps(crypto_data), callback=delivery_report)
     producer.flush()
     
-    # data.append({"rank": number,
-    #              "coin": coin_name,
-    #              "price": price,
-    #              "1h": hourly_update,
-    #              "24h": one_day_update,
-    #              "7d": week_update,
-    #              "24h Volume": one_day_volume,
-    #              "market cap": market_cap})
-    
-df = pd.DataFrame(data)
-
-print(df)
-
-
 driver.quit()
